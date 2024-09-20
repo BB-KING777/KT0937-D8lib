@@ -183,8 +183,19 @@ KT0937_D8_Error kt0937_setMute(bool mute) {
 }
 
 // RSSI取得
-KT0937_D8_Error kt0937_getRSSI(uint8_t *rssi) {
+/*KT0937_D8_Error kt0937_getRSSI(uint8_t *rssi) {
   return kt0937_readRegister(REG_STATUS8, rssi);
+}*/
+KT0937_D8_Error kt0937_getRSSI(int8_t *rssi) {
+  uint8_t raw_rssi;
+  KT0937_D8_Error err = kt0937_readRegister(REG_STATUS8, &raw_rssi);
+  
+  if (err == KT0937_D8_Error::OK) {
+    // KT0937-D8のデータシートに基づいてRSSI値を計算
+    *rssi = -110 + (int8_t)(raw_rssi & 0x7F);
+  }
+  
+  return err;
 }
 
 // SNR取得

@@ -51,7 +51,7 @@ KT0937_D8_Error kt0937_setMode(KT0937_D8_Mode mode);
 KT0937_D8_Error kt0937_setFrequency(uint32_t frequency);
 KT0937_D8_Error kt0937_setVolume(uint8_t volume);
 KT0937_D8_Error kt0937_setMute(bool mute);
-KT0937_D8_Error kt0937_getRSSI(uint8_t *rssi);
+KT0937_D8_Error kt0937_getRSSI(int8_t *rssi);
 KT0937_D8_Error kt0937_getSNR(uint8_t *snr);
 KT0937_D8_Error kt0937_isStereo(bool *is_stereo);
 KT0937_D8_Error kt0937_setAFC(bool enable);
