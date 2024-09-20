@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> このライブラリは現在試験段階及び、個人利用目的です。このライブラリの使用による機器の破損、製品のバグなどに関しては一切責任を負うことはできません。
+> This library is currently in the testing phase and is for personal use only. We are not responsible for any damage to equipment or bugs in the product that may result from the use of this library.
+
 # KT0937-D8lib
 This library for SDR radio chip "KT0937-D8"
 
