@@ -27,7 +27,7 @@ This library for SDR radio chip "KT0937-D8"
 ## 使用方法
 
 ```cpp
-#include <KT0937_D8.h>
+#include "KT0937_D8.h"
 
 void setup() {
   Serial.begin(115200);
@@ -89,7 +89,7 @@ Features
 
 Usage
 ```cpp
-#include <KT0937_D8.h>
+#include "KT0937_D8.h"
 
 void setup() {
   Serial.begin(115200);
