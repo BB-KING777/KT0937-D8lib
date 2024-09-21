@@ -136,6 +136,31 @@ KT0937_D8_Error kt0937_setMode(KT0937_D8_Mode mode) {
   return kt0937_writeRegister(REG_FMCHAN0, value);
 }
 
+// 周波数読み取り関数（新規追加）
+KT0937_D8_Error kt0937_getFrequency(uint32_t *frequency) {
+  uint8_t mode, high_byte, low_byte;
+  
+  if (kt0937_readRegister(REG_FMCHAN0, &mode) != KT0937_D8_Error::OK) {
+    return KT0937_D8_Error::ERROR_I2C;
+  }
+
+  high_byte = mode & 0x0F;
+
+  if (kt0937_readRegister(REG_FMCHAN1, &low_byte) != KT0937_D8_Error::OK) {
+    return KT0937_D8_Error::ERROR_I2C;
+  }
+
+  uint16_t channel = (high_byte << 8) | low_byte;
+
+  if (!(mode & 0x40)) {  // FMモード
+    *frequency = channel * 50 + 76000;  // 76MHz基準、50kHzステップ
+  } else {  // AMモード
+    *frequency = channel + 522;  // 522kHz基準
+  }
+
+  return KT0937_D8_Error::OK;
+}
+
 // 周波数設定
 KT0937_D8_Error kt0937_setFrequency(uint32_t frequency) {
   uint8_t mode;
@@ -145,9 +170,9 @@ KT0937_D8_Error kt0937_setFrequency(uint32_t frequency) {
 
   uint16_t channel;
   if (!(mode & 0x40)) {  // FMモード
-    channel = (frequency - 87000) / 50;  // 87MHz基準、50kHzステップ
+    channel = (frequency - 76000) / 50;  // 76MHz基準、50kHzステップ
   } else {  // AMモード
-    channel = frequency;  // 直接周波数値を使用
+    channel = frequency - 522;  // 522kHz基準
   }
 
   uint8_t high_byte = (channel >> 8) & 0x0F;

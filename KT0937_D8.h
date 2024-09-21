@@ -3,6 +3,34 @@
 
 #include <stdint.h>
 
+#define KT0937_D8_ADDR 0x35
+
+// レジスタアドレス
+#define REG_DEVICEID0 0x00
+#define REG_DSPCFG5 0x002F
+#define REG_RXCFG0 0x0E
+#define REG_RXCFG1 0x0F
+#define REG_BANDCFG0 0x16
+#define REG_BANDCFG2 0x18
+#define REG_BANDCFG3 0x19
+#define REG_MUTECFG0 0x1A
+#define REG_SOFTMUTE2 0x1F
+#define REG_SOFTMUTE5 0x22
+#define REG_SOUNDCFG 0x28
+#define REG_DSPCFG0 0x2A
+#define REG_DSPCFG1 0x2B
+#define REG_DSPCFG2 0x2C
+#define REG_AFC2 0x3E
+#define REG_ANACFG 0x4E
+#define REG_GPIOCFG2 0x51
+#define REG_AMDSP0 0x62
+#define REG_FMCHAN0 0x88
+#define REG_FMCHAN1 0x89
+#define REG_STATUS0 0xDE
+#define REG_STATUS4 0xE2
+#define REG_STATUS8 0xE6
+#define REG_AFC_STATUS1 0xE9
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -80,6 +108,9 @@ KT0937_D8_Error kt0937_readRDS(uint16_t *block_a, uint16_t *block_b, uint16_t *b
 KT0937_D8_Error kt0937_set3DSound(uint8_t level);
 KT0937_D8_Error kt0937_setLowPowerMode(bool enable);
 KT0937_D8_Error kt0937_getChipInfo(uint16_t *chip_id, uint8_t *version);
+KT0937_D8_Error kt0937_readRegister(uint8_t reg, uint8_t *value);
+KT0937_D8_Error kt0937_writeRegister(uint8_t reg, uint8_t value);
+KT0937_D8_Error kt0937_getFrequency(uint32_t *frequency);
 
 const char* kt0937_errorToString(KT0937_D8_Error error);
 void kt0937_printDebugInfo(void (*print_func)(const char*));
