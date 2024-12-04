@@ -70,6 +70,32 @@ void loop() {
 ## 貢献
 バグ報告や機能リクエストは、GitHubのIssueページにお願いします。プルリクエストも歓迎します。このライブラリおよびモジュールを作成するにあたり、知恵袋のユーザーであるogu******さんに感謝申し上げます。
 
+## PCBファイル(基盤データ)に関して
+KT0937-D8のデータシートのApprication Circuitを再現した、PCBファイルを作成しました。発注する場合、「g」から始まるデータと、「.drl」ファイルをすべてzipファイルに入れてください。使用する部品は以下の通りです。
+
+| Reference | Value | Datasheet | Footprint | Qty | DNP |
+|-----------|--------|-----------|------------|-----|-----|
+| C1 | 100pF | ~ | Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm | 1 | |
+| C2,C4 | 0.1uF | ~ | Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm | 2 | |
+| C3 | 47nF | ~ | Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm | 1 | |
+| C5,C6 | 24pF | ~ | Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm | 2 | |
+| C7,C8 | 125uF | ~ | Capacitor_THT:CP_Radial_D8.0mm_P3.50mm | 2 | |
+| C9,C10,C11 | 10uF | ~ | -- ミックスされた値 -- | 3 | |
+| C12,C13,C14 | 4.7uF | ~ | Capacitor_THT:C_Radial_D5.0mm_H5.0mm_P2.00mm | 3 | |
+| D1,D2 | D | ~ | Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal | 2 | |
+| J1 | Conn_01x04_Pin | ~ | Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal | 1 | |
+| J2,J3 | AudioJack3 | ~ | Connector_Audio:Jack_3.5mm_CUI_SJ-3523-SMT_Horizontal | 2 | |
+| J4 | Conn_01x02_Pin | ~ | Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal | 1 | |
+| KT1 | ~ | | Package_SO:SSOP-16_3.9x4.9mm_P0.635mm | 1 | |
+| L1 | 2.2uH | ~ | Inductor_THT:L_Axial_L5.3mm_D2.2mm_P7.62mm_Horizontal_Vishay_IM-1 | 1 | |
+| Q1 | 2N3904 | https://www.onsemi.com/pub/Collateral/2N3903-D.PDF | Package_TO_SOT_THT:TO-92_Inline | 1 | |
+| R1 | 4.7KΩ | ~ | Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal | 1 | |
+| R2 | 4.7kΩ | ~ | Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal | 1 | |
+| R3,R4,R5,R6,R7,R8 | 10kΩ | ~ | Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal | 6 | |
+| R9,R10 | 100kΩ | ~ | Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal | 2 | |
+| SW1,SW2 | SW_Wuerth_450301014042 | https://www.we-online.com/components/products/datasheet/450301014042.pdf | Button_Switch_THT:SW_Slide-03_Wuerth-WS-SLTV_10x2.5x6.4_P2.54mm | 2 | |
+| Y1 | Crystal | ~ | Crystal:Crystal_AT310_D3.0mm_L10.0mm_Horizontal | 1 | |
+
 
 # KT0937-D8 Radio Chip Library
 ## Overview
