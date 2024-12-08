@@ -715,3 +715,146 @@ void kt0937_dumpAllRegisters(void (*print_func)(const char*)) {
     kt0937_printRegister(reg, print_func);
   }
 }
+
+KT0937_D8_Error kt0937_setDetailedSpacing(KT0937_D8_Mode mode, uint8_t spacing) {
+    uint8_t value;
+    if (kt0937_readRegister(REG_BANDCFG2, &value) != KT0937_D8_Error::OK) {
+        return KT0937_D8_Error::ERROR_I2C;
+    }
+
+    switch (mode) {
+        case KT0937_D8_Mode::FM:
+            value = (value & 0xCF) | ((spacing & 0x03) << 4); // FM_SPACE bits
+            break;
+        case KT0937_D8_Mode::MW:
+            value = (value & 0xFC) | (spacing & 0x03); // MW_SPACE bits
+            break;
+        case KT0937_D8_Mode::SW:
+            if (kt0937_readRegister(REG_BANDCFG3, &value) != KT0937_D8_Error::OK) {
+                return KT0937_D8_Error::ERROR_I2C;
+            }
+            value = (value & 0xFC) | (spacing & 0x03); // SW_SPACE bits
+            break;
+        default:
+            return KT0937_D8_Error::ERROR_PARAM;
+    }
+
+    return kt0937_writeRegister(mode == KT0937_D8_Mode::SW ? REG_BANDCFG3 : REG_BANDCFG2, value);
+}
+
+// オーディオ品質制御の実装
+KT0937_D8_Error kt0937_setAudioQuality(const AudioQualityConfig& config) {
+    KT0937_D8_Error err;
+
+    // ステレオブレンド設定
+    err = kt0937_writeRegister(REG_DSPCFG2, 
+        (config.stereoBlendStart << 4) | (config.stereoBlendStop & 0x0F));
+    if (err != KT0937_D8_Error::OK) return err;
+
+    // ソフトミュート設定
+    err = kt0937_writeRegister(REG_SOFTMUTE2,
+        (config.softmuteStartRSSI << 4) | (config.softmuteSlopeRSSI & 0x07));
+    if (err != KT0937_D8_Error::OK) return err;
+
+    err = kt0937_writeRegister(REG_SOFTMUTE5,
+        (config.softmuteStartSNR << 2) | (config.softmuteSlopeSNR & 0x03));
+    if (err != KT0937_D8_Error::OK) return err;
+
+    // バス設定
+    err = kt0937_writeRegister(REG_SOUNDCFG,
+        (config.bassBoost << 4) & 0x30);
+    if (err != KT0937_D8_Error::OK) return err;
+
+    // オーディオゲイン設定
+    return kt0937_writeRegister(REG_DSPCFG0,
+        (config.audioGain << 4) & 0x70);
+}
+
+// 保護機能の実装
+KT0937_D8_Error kt0937_getProtectionStatus(ProtectionStatus* status) {
+    uint8_t value;
+    
+    // 電源電圧監視
+    if (kt0937_readRegister(0x0071, &value) != KT0937_D8_Error::OK) {
+        return KT0937_D8_Error::ERROR_I2C;
+    }
+    status->voltage = (value & 0x7F) * 20 + 2100; // mV
+    status->voltageLow = (value & 0x80) != 0;
+
+    // 温度監視
+    if (kt0937_readRegister(0x0072, &value) != KT0937_D8_Error::OK) {
+        return KT0937_D8_Error::ERROR_I2C;
+    }
+    status->temperature = ((int8_t)value) - 40; // °C
+    status->temperatureHigh = (status->temperature > 85);
+
+    // アンテナ状態確認
+    if (kt0937_readRegister(0x00EA, &value) != KT0937_D8_Error::OK) {
+        return KT0937_D8_Error::ERROR_I2C;
+    }
+    status->antennaError = (value & 0x40) != 0;
+
+    return KT0937_D8_Error::OK;
+}
+
+// 自動チャンネル設定機能の実装
+KT0937_D8_Error kt0937_autoTune(const AutoTuneConfig& config, AutoTuneResult* results, uint8_t maxResults, uint8_t* numFound) {
+    KT0937_D8_Error err;
+    *numFound = 0;
+
+    // 初期周波数に設定
+    err = kt0937_setFrequency(config.startFreq);
+    if (err != KT0937_D8_Error::OK) return err;
+
+    // シーク開始
+    err = kt0937_startSeek(config.seekUp, config.wrapAround);
+    if (err != KT0937_D8_Error::OK) return err;
+
+    while (*numFound < maxResults) {
+        bool complete = false, failed = false;
+        
+        // シーク完了待ち
+        do {
+            err = kt0937_checkSeekStatus(&complete, &failed);
+            if (err != KT0937_D8_Error::OK) return err;
+            delay(10);
+        } while (!complete && !failed);
+
+        if (failed) break;
+
+        // 現在の周波数を取得
+        uint32_t freq;
+        err = kt0937_getFrequency(&freq);
+        if (err != KT0937_D8_Error::OK) return err;
+
+        // RSSI, SNRを取得
+        int8_t rssi;
+        uint8_t snr;
+        err = kt0937_getRSSI(&rssi);
+        if (err != KT0937_D8_Error::OK) return err;
+        err = kt0937_getSNR(&snr);
+        if (err != KT0937_D8_Error::OK) return err;
+
+        // 条件を満たす場合は結果に追加
+        if (rssi >= config.minRSSI && snr >= config.minSNR) {
+            bool isValid;
+            err = kt0937_isChannelValid(&isValid);
+            if (err != KT0937_D8_Error::OK) return err;
+
+            results[*numFound].frequency = freq;
+            results[*numFound].rssi = rssi;
+            results[*numFound].snr = snr;
+            results[*numFound].isValid = isValid;
+            (*numFound)++;
+        }
+
+        // 終了周波数に達したら終了
+        if (freq >= config.endFreq) break;
+
+        // 次のチャンネルへ
+        err = kt0937_startSeek(config.seekUp, config.wrapAround);
+        if (err != KT0937_D8_Error::OK) return err;
+    }
+
+    return KT0937_D8_Error::OK;
+}

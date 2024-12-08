@@ -73,6 +73,66 @@ enum class KT0937_D8_SWSpace {
     SPACE_10KHZ
 };
 
+// チャンネルスペース設定の詳細オプション
+enum class KT0937_D8_FMSpaceDetail {
+    SPACE_200KHZ = 0, // USA, Europe
+    SPACE_100KHZ = 1, // Europe, Japan 
+    SPACE_50KHZ = 2
+};
+
+enum class KT0937_D8_AMSpaceDetail {
+    SPACE_1KHZ = 0,
+    SPACE_9KHZ = 1, // Europe, Asia
+    SPACE_10KHZ = 2 // USA
+};
+
+enum class KT0937_D8_SWSpaceDetail {
+    SPACE_1KHZ = 0,
+    SPACE_5KHZ = 1,
+    SPACE_9KHZ = 2,
+    SPACE_10KHZ = 3
+};
+
+// オーディオ品質設定構造体
+struct AudioQualityConfig {
+    uint8_t stereoBlendStart;
+    uint8_t stereoBlendStop;
+    uint8_t softmuteStartRSSI;
+    uint8_t softmuteStartSNR;
+    uint8_t softmuteSlopeRSSI;
+    uint8_t softmuteSlopeSNR;
+    uint8_t bassBoost;
+    uint8_t audioGain;
+};
+
+// 保護状態構造体
+struct ProtectionStatus {
+    bool voltageLow;
+    bool temperatureHigh;
+    bool antennaError;
+    int8_t temperature;
+    uint16_t voltage;
+};
+
+// 自動チューニング設定構造体
+struct AutoTuneConfig {
+    uint8_t minRSSI;
+    uint8_t minSNR;
+    uint8_t channelSpacing;
+    uint32_t startFreq;
+    uint32_t endFreq;
+    bool seekUp;
+    bool wrapAround;
+};
+
+// 自動チューニング結果構造体
+struct AutoTuneResult {
+    uint32_t frequency;
+    int8_t rssi;
+    uint8_t snr;
+    bool isValid;
+};
+
 // 関数プロトタイプ
 KT0937_D8_Error kt0937_init(int sda_pin, int scl_pin);
 KT0937_D8_Error kt0937_setMode(KT0937_D8_Mode mode);
@@ -111,6 +171,10 @@ KT0937_D8_Error kt0937_getChipInfo(uint16_t *chip_id, uint8_t *version);
 KT0937_D8_Error kt0937_readRegister(uint8_t reg, uint8_t *value);
 KT0937_D8_Error kt0937_writeRegister(uint8_t reg, uint8_t value);
 KT0937_D8_Error kt0937_getFrequency(uint32_t *frequency);
+KT0937_D8_Error kt0937_setDetailedSpacing(KT0937_D8_Mode mode, uint8_t spacing);
+KT0937_D8_Error kt0937_setAudioQuality(const AudioQualityConfig& config);
+KT0937_D8_Error kt0937_getProtectionStatus(ProtectionStatus* status);
+KT0937_D8_Error kt0937_autoTune(const AutoTuneConfig& config, AutoTuneResult* results, uint8_t maxResults, uint8_t* numFound);
 
 const char* kt0937_errorToString(KT0937_D8_Error error);
 void kt0937_printDebugInfo(void (*print_func)(const char*));
