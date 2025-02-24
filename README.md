@@ -6,9 +6,10 @@
 
 
 # Language Selection
-- [日本語]((https://github.com/BB-KING777/KT0937-D8lib?tab=readme-ov-file#kt0937-d8-%E3%83%A9%E3%82%B8%E3%82%AA%E3%83%81%E3%83%83%E3%83%97%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA))
+- [日本語](https://github.com/BB-KING777/KT0937-D8lib?tab=readme-ov-file#kt0937-d8-%E3%83%A9%E3%82%B8%E3%82%AA%E3%83%81%E3%83%83%E3%83%97%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA)
 - [English](https://github.com/BB-KING777/KT0937-D8lib?tab=readme-ov-file#kt0937-d8-radio-chip-library)
-- [中文]()
+- [中文](https://github.com/BB-KING777/KT0937-D8lib?tab=readme-ov-file#kt0937-d8-%E7%84%A1%E7%B7%9A%E9%9B%BB%E6%99%B6%E7%89%87%E5%BA%AB)
+- [한국어](https://github.com/BB-KING777/KT0937-D8lib?tab=readme-ov-file#kt0937-d8-%EB%AC%B4%EC%84%A0-%EC%B9%A9-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC)
 
 # KT0937-D8lib
 This library for SDR radio chip "KT0937-D8"
